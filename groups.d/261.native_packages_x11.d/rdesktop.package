@@ -5,6 +5,7 @@
 : ${PKG_RDESKTOP_CPPFLAGS_CONFIGURE:="${NATIVE_PACKAGES_CFLAGS_CONFIGURE}"};
 : ${PKG_RDESKTOP_IN_TREE:=1};
 : ${PKG_RDESKTOP_CONFIGURE_ARGS_EXTRA:="--disable-credssp --disable-smartcard --without-sound --with-openssl=${PREFIX_NATIVE}"};
+: ${PKG_RDESKTOP_DISABLED:=1};
 
 ex_pkg_register "rdesktop" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
 
