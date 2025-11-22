@@ -1,6 +1,6 @@
 : ${PKG_GNUTLS_DEPENDS:="libunistring libtasn1 nettle zstd"};
-: ${PKG_GNUTLS_SHA256SUM:=db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7};
-: ${PKG_GNUTLS_VERSION:=3.8.10};
+: ${PKG_GNUTLS_SHA256SUM:=91bd23c4a86ebc6152e81303d20cf6ceaeb97bc8f84266d0faec6e29f17baa20};
+: ${PKG_GNUTLS_VERSION:=3.8.11};
 : ${PKG_GNUTLS_URL:=https://www.gnupg.org/ftp/gcrypt/gnutls/v${PKG_GNUTLS_VERSION%.*}/gnutls-${PKG_GNUTLS_VERSION}.tar.xz};
 : ${PKG_GNUTLS_CONFIG_CACHE_EXTRA:="
 gl_cv_func_working_getdelim=yes
