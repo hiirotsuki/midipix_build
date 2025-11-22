@@ -1,6 +1,6 @@
 : ${PKG_LIBX11_DEPENDS:="xcb xorgproto xtrans"};
-: ${PKG_LIBX11_SHA256SUM:=2b3b3dad9347db41dca56beb7db5878f283bde1142f04d9f8e478af435dfdc53};
-: ${PKG_LIBX11_VERSION:=1.8.10};
+: ${PKG_LIBX11_SHA256SUM:=fa026f9bb0124f4d6c808f9aef4057aad65e7b35d8ff43951cef0abe06bb9a9a};
+: ${PKG_LIBX11_VERSION:=1.8.12};
 : ${PKG_LIBX11_URL:=https://www.x.org/releases/individual/lib/libX11-${PKG_LIBX11_VERSION}.tar.xz};
 : ${PKG_LIBX11_CONFIGURE_ARGS_EXTRA:="--without-fop --disable-unix-transport"};
 
