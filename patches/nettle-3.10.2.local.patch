@@ -1,0 +1,625 @@
+diff -ru nettle-3.10.2.orig/x86_64/aes-decrypt-internal.asm nettle-3.10.2/x86_64/aes-decrypt-internal.asm
+--- nettle-3.10.2.orig/x86_64/aes-decrypt-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/aes-decrypt-internal.asm	2025-11-22 13:56:46.309745256 +0100
+@@ -151,3 +151,11 @@
+ 	W64_EXIT(6, 0)
+ 	ret
+ EPILOGUE(_nettle_aes_decrypt)
++
++#ifdef __midipix__
++	.section .got$_nettle_aes_decrypt,"r"
++	.global __imp__nettle_aes_decrypt
++__imp__nettle_aes_decrypt:
++	.quad   _nettle_aes_decrypt
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/aes-encrypt-internal.asm nettle-3.10.2/x86_64/aes-encrypt-internal.asm
+--- nettle-3.10.2.orig/x86_64/aes-encrypt-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/aes-encrypt-internal.asm	2025-11-22 13:56:46.309879555 +0100
+@@ -151,3 +151,11 @@
+ 	W64_EXIT(6, 0)
+ 	ret
+ EPILOGUE(_nettle_aes_encrypt)
++
++#ifdef __midipix__
++	.section .got$_nettle_aes_encrypt,"r"
++	.global __imp__nettle_aes_encrypt
++__imp__nettle_aes_encrypt:
++	.quad   _nettle_aes_encrypt
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/camellia-crypt-internal.asm nettle-3.10.2/x86_64/camellia-crypt-internal.asm
+--- nettle-3.10.2.orig/x86_64/camellia-crypt-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/camellia-crypt-internal.asm	2025-11-22 13:56:46.309997042 +0100
+@@ -200,3 +200,11 @@
+ 	W64_EXIT(6, 0)
+ 	ret
+ EPILOGUE(_nettle_camellia_crypt)
++
++#ifdef __midipix__
++	.section .got$_nettle_camellia_crypt,"r"
++	.global __imp__nettle_camellia_crypt
++__imp__nettle_camellia_crypt:
++	.quad   _nettle_camellia_crypt
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/chacha-core-internal.asm nettle-3.10.2/x86_64/chacha-core-internal.asm
+--- nettle-3.10.2.orig/x86_64/chacha-core-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/chacha-core-internal.asm	2025-11-22 13:56:46.310110932 +0100
+@@ -126,3 +126,11 @@
+ 	W64_EXIT(3, 6)
+ 	ret
+ EPILOGUE(_nettle_chacha_core)
++
++#ifdef __midipix__
++	.section .got$_nettle_chacha_core,"r"
++	.global __imp__nettle_chacha_core
++__imp__nettle_chacha_core:
++	.quad   _nettle_chacha_core
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-curve25519-modp.asm nettle-3.10.2/x86_64/ecc-curve25519-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-curve25519-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-curve25519-modp.asm	2025-11-22 13:56:46.310251420 +0100
+@@ -98,3 +98,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_curve25519_modp)
++
++#ifdef __midipix__
++        .section .got$_nettle_ecc_curve25519_modp,"r"
++        .global __imp__nettle_ecc_curve25519_modp
++__imp__nettle_ecc_curve25519_modp:
++        .quad   _nettle_ecc_curve25519_modp
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-curve448-modp.asm nettle-3.10.2/x86_64/ecc-curve448-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-curve448-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-curve448-modp.asm	2025-11-22 13:56:46.310361147 +0100
+@@ -145,3 +145,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_curve448_modp)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_curve448_modp,"r"
++	.global __imp__nettle_ecc_curve448_modp
++__imp__nettle_ecc_curve448_modp:
++	.quad   _nettle_ecc_curve448_modp
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-secp192r1-modp.asm nettle-3.10.2/x86_64/ecc-secp192r1-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-secp192r1-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-secp192r1-modp.asm	2025-11-22 13:56:46.310465698 +0100
+@@ -88,3 +88,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_secp192r1_modp)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_secp192r1_modp,"r"
++	.global __imp__nettle_ecc_secp192r1_modp
++__imp__nettle_ecc_secp192r1_modp:
++	.quad   _nettle_ecc_secp192r1_modp
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-secp224r1-modp.asm nettle-3.10.2/x86_64/ecc-secp224r1-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-secp224r1-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-secp224r1-modp.asm	2025-11-22 13:56:46.310578937 +0100
+@@ -133,3 +133,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_secp224r1_modp)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_secp224r1_modp,"r"
++	.global __imp__nettle_ecc_secp224r1_modp
++__imp__nettle_ecc_secp224r1_modp:
++	.quad   _nettle_ecc_secp224r1_modp
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-secp256r1-redc.asm nettle-3.10.2/x86_64/ecc-secp256r1-redc.asm
+--- nettle-3.10.2.orig/x86_64/ecc-secp256r1-redc.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-secp256r1-redc.asm	2025-11-22 13:56:46.310686301 +0100
+@@ -121,3 +121,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_secp256r1_redc)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_secp256r1_redc,"r"
++	.global __imp__nettle_ecc_secp256r1_redc
++__imp__nettle_ecc_secp256r1_redc:
++	.quad   _nettle_ecc_secp256r1_redc
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-secp384r1-modp.asm nettle-3.10.2/x86_64/ecc-secp384r1-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-secp384r1-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-secp384r1-modp.asm	2025-11-22 13:56:46.310797510 +0100
+@@ -236,3 +236,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_secp384r1_modp)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_secp384r1_modp,"r"
++	.global __imp__nettle_ecc_secp384r1_modp
++__imp__nettle_ecc_secp384r1_modp:
++	.quad   _nettle_ecc_secp384r1_modp
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/ecc-secp521r1-modp.asm nettle-3.10.2/x86_64/ecc-secp521r1-modp.asm
+--- nettle-3.10.2.orig/x86_64/ecc-secp521r1-modp.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/ecc-secp521r1-modp.asm	2025-11-22 13:56:46.310910954 +0100
+@@ -160,3 +160,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_ecc_secp521r1_modp)
++
++#ifdef __midipix__
++	.section .got$_nettle_ecc_secp521r1_modp,"r"
++	.global __imp__nettle_ecc_secp521r1_modp
++__imp__nettle_ecc_secp521r1_modp:
++	.quad   _nettle_ecc_secp521r1_modp
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes128-decrypt-2.asm nettle-3.10.2/x86_64/fat/aes128-decrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes128-decrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes128-decrypt-2.asm	2025-11-22 13:56:46.311034638 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes128-decrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes128_decrypt_aesni,"r"
++        .global __imp__nettle_aes128_decrypt_aesni
++__imp__nettle_aes128_decrypt_aesni:
++        .quad   _nettle_aes128_decrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes128-encrypt-2.asm nettle-3.10.2/x86_64/fat/aes128-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes128-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes128-encrypt-2.asm	2025-11-22 13:56:46.311137270 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes128-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes128_encrypt_aesni,"r"
++        .global __imp__nettle_aes128_encrypt_aesni
++__imp__nettle_aes128_encrypt_aesni:
++        .quad   _nettle_aes128_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes192-decrypt-2.asm nettle-3.10.2/x86_64/fat/aes192-decrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes192-decrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes192-decrypt-2.asm	2025-11-22 13:56:46.311235411 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes192-decrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes192_decrypt_aesni,"r"
++        .global __imp__nettle_aes192_decrypt_aesni
++__imp__nettle_aes192_decrypt_aesni:
++        .quad   _nettle_aes192_decrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes192-encrypt-2.asm nettle-3.10.2/x86_64/fat/aes192-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes192-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes192-encrypt-2.asm	2025-11-22 13:56:46.311342098 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes192-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes192_encrypt_aesni,"r"
++        .global __imp__nettle_aes192_encrypt_aesni
++__imp__nettle_aes192_encrypt_aesni:
++        .quad   _nettle_aes192_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes256-decrypt-2.asm nettle-3.10.2/x86_64/fat/aes256-decrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes256-decrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes256-decrypt-2.asm	2025-11-22 13:56:46.311446209 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes256-decrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes256_decrypt_aesni,"r"
++        .global __imp__nettle_aes256_decrypt_aesni
++__imp__nettle_aes256_decrypt_aesni:
++        .quad   _nettle_aes256_decrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/aes256-encrypt-2.asm nettle-3.10.2/x86_64/fat/aes256-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/aes256-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/aes256-encrypt-2.asm	2025-11-22 13:56:46.311548318 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/aes256-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_aes256_encrypt_aesni,"r"
++        .global __imp__nettle_aes256_encrypt_aesni
++__imp__nettle_aes256_encrypt_aesni:
++        .quad   _nettle_aes256_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/cbc-aes128-encrypt-2.asm nettle-3.10.2/x86_64/fat/cbc-aes128-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/cbc-aes128-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/cbc-aes128-encrypt-2.asm	2025-11-22 13:56:46.311662468 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/cbc-aes128-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_cbc_aes128_encrypt_aesni,"r"
++        .global __imp__nettle_cbc_aes128_encrypt_aesni
++__imp__nettle_cbc_aes128_encrypt_aesni:
++        .quad   _nettle_cbc_aes128_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/cbc-aes192-encrypt-2.asm nettle-3.10.2/x86_64/fat/cbc-aes192-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/cbc-aes192-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/cbc-aes192-encrypt-2.asm	2025-11-22 13:56:46.311770241 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/cbc-aes192-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_cbc_aes192_encrypt_aesni,"r"
++        .global __imp__nettle_cbc_aes192_encrypt_aesni
++__imp__nettle_cbc_aes192_encrypt_aesni:
++        .quad   _nettle_cbc_aes192_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/cbc-aes256-encrypt-2.asm nettle-3.10.2/x86_64/fat/cbc-aes256-encrypt-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/cbc-aes256-encrypt-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/cbc-aes256-encrypt-2.asm	2025-11-22 13:56:46.311875768 +0100
+@@ -34,3 +34,11 @@
+ 
+ define(`fat_transform', `_$1_aesni')
+ include_src(`x86_64/aesni/cbc-aes256-encrypt.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_cbc_aes256_encrypt_aesni,"r"
++        .global __imp__nettle_cbc_aes256_encrypt_aesni
++__imp__nettle_cbc_aes256_encrypt_aesni:
++        .quad   _nettle_cbc_aes256_encrypt_aesni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/cpuid.asm nettle-3.10.2/x86_64/fat/cpuid.asm
+--- nettle-3.10.2.orig/x86_64/fat/cpuid.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/cpuid.asm	2025-11-22 13:56:46.311985057 +0100
+@@ -57,3 +57,10 @@
+ 	ret
+ EPILOGUE(_nettle_cpuid)
+ 
++#ifdef __midipix__
++        .section .got$_nettle_cpuid,"r"
++        .global __imp__nettle_cpuid
++__imp__nettle_cpuid:
++        .quad   _nettle_cpuid
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/ghash-set-key-2.asm nettle-3.10.2/x86_64/fat/ghash-set-key-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/ghash-set-key-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/ghash-set-key-2.asm	2025-11-22 13:56:46.312087454 +0100
+@@ -35,3 +35,11 @@
+ 
+ define(`fat_transform', `$1_pclmul')
+ include_src(`x86_64/pclmul/ghash-set-key.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_ghash_set_key_pclmul,"r"
++        .global __imp__nettle_ghash_set_key_pclmul
++__imp__nettle_ghash_set_key_pclmul:
++        .quad   _nettle_ghash_set_key_pclmul
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/ghash-update-2.asm nettle-3.10.2/x86_64/fat/ghash-update-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/ghash-update-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/ghash-update-2.asm	2025-11-22 13:56:46.312191878 +0100
+@@ -35,3 +35,11 @@
+ 
+ define(`fat_transform', `$1_pclmul')
+ include_src(`x86_64/pclmul/ghash-update.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_ghash_update_pclmul,"r"
++        .global __imp__nettle_ghash_update_pclmul
++__imp__nettle_ghash_update_pclmul:
++        .quad   _nettle_ghash_update_pclmul
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/ghash-update.asm nettle-3.10.2/x86_64/fat/ghash-update.asm
+--- nettle-3.10.2.orig/x86_64/fat/ghash-update.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/ghash-update.asm	2025-11-22 13:56:46.312298337 +0100
+@@ -35,3 +35,11 @@
+ 
+ define(`fat_transform', `$1_table')
+ include_src(`x86_64/ghash-update.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_ghash_update_table,"r"
++        .global __imp__nettle_ghash_update_table
++__imp__nettle_ghash_update_table:
++        .quad   _nettle_ghash_update_table
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/memxor-2.asm nettle-3.10.2/x86_64/fat/memxor-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/memxor-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/memxor-2.asm	2025-11-22 13:56:46.312415111 +0100
+@@ -34,3 +34,11 @@
+ define(`fat_transform', `_$1_sse2')
+ define(`USE_SSE2', `yes')
+ include_src(`x86_64/memxor.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_memxor_sse2,"r"
++        .global __imp__nettle_memxor_sse2
++__imp__nettle_memxor_sse2:
++        .quad   _nettle_memxor_sse2
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/memxor.asm nettle-3.10.2/x86_64/fat/memxor.asm
+--- nettle-3.10.2.orig/x86_64/fat/memxor.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/memxor.asm	2025-11-22 13:56:46.312521918 +0100
+@@ -33,3 +33,11 @@
+ 
+ define(`fat_transform', `_$1_x86_64')
+ include_src(`x86_64/memxor.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_memxor_x86_64,"r"
++        .global __imp__nettle_memxor_x86_64
++__imp__nettle_memxor_x86_64:
++        .quad   _nettle_memxor_x86_64
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/sha1-compress-2.asm nettle-3.10.2/x86_64/fat/sha1-compress-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/sha1-compress-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/sha1-compress-2.asm	2025-11-22 13:56:46.312631493 +0100
+@@ -32,3 +32,11 @@
+ 
+ define(`fat_transform', `_$1_sha_ni')
+ include_src(`x86_64/sha_ni/sha1-compress.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_sha1_compress_sha_ni,"r"
++        .global __imp__nettle_sha1_compress_sha_ni
++__imp__nettle_sha1_compress_sha_ni:
++        .quad   _nettle_sha1_compress_sha_ni
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/sha1-compress.asm nettle-3.10.2/x86_64/fat/sha1-compress.asm
+--- nettle-3.10.2.orig/x86_64/fat/sha1-compress.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/sha1-compress.asm	2025-11-22 13:56:46.312731266 +0100
+@@ -32,3 +32,11 @@
+ 
+ define(`fat_transform', `_$1_x86_64')
+ include_src(`x86_64/sha1-compress.asm')
++
++#ifdef __midipix__
++        .section .got$_nettle_sha1_compress_x86_64,"r"
++        .global __imp__nettle_sha1_compress_x86_64
++__imp__nettle_sha1_compress_x86_64:
++        .quad   _nettle_sha1_compress_x86_64
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/sha256-compress-n-2.asm nettle-3.10.2/x86_64/fat/sha256-compress-n-2.asm
+--- nettle-3.10.2.orig/x86_64/fat/sha256-compress-n-2.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/sha256-compress-n-2.asm	2025-11-22 14:04:14.779284072 +0100
+@@ -32,3 +32,11 @@
+ 
+ define(`fat_transform', `$1_sha_ni')
+ include_src(`x86_64/sha_ni/sha256-compress-n.asm')
++
++#ifdef __midipix__
++    .section .got$_nettle_sha256_compress_n_sha_ni,"r"
++    .global __imp__nettle_sha256_compress_n_sha_ni
++__imp__nettle_sha256_compress_n_sha_ni:
++    .quad   _nettle_sha256_compress_n_sha_ni
++    .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/fat/sha256-compress-n.asm nettle-3.10.2/x86_64/fat/sha256-compress-n.asm
+--- nettle-3.10.2.orig/x86_64/fat/sha256-compress-n.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/fat/sha256-compress-n.asm	2025-11-22 14:03:39.913973508 +0100
+@@ -32,3 +32,11 @@
+ 
+ define(`fat_transform', `$1_x86_64')
+ include_src(`x86_64/sha256-compress-n.asm')
++
++#ifdef __midipix__
++    .section .got$_nettle_sha256_compress_n_x86_64,"r"
++    .global __imp__nettle_sha256_compress_n_x86_64
++__imp__nettle_sha256_compress_n_x86_64:
++    .quad   _nettle_sha256_compress_n_x86_64
++    .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/memxor3.asm nettle-3.10.2/x86_64/memxor3.asm
+--- nettle-3.10.2.orig/x86_64/memxor3.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/memxor3.asm	2025-11-22 13:56:46.312843722 +0100
+@@ -261,3 +261,11 @@
+ 	
+ 
+ EPILOGUE(nettle_memxor3)
++
++#ifdef __midipix__
++	.section .got$nettle_memxor3,"r"
++	.global __imp_nettle_memxor3
++__imp_nettle_memxor3:
++	.quad   nettle_memxor3
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/poly1305-blocks.asm nettle-3.10.2/x86_64/poly1305-blocks.asm
+--- nettle-3.10.2.orig/x86_64/poly1305-blocks.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/poly1305-blocks.asm	2025-11-22 14:00:45.317895445 +0100
+@@ -126,3 +126,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_poly1305_blocks)
++
++#ifdef __midipix__
++    .section .got$_nettle_poly1305_blocks,"r"
++    .global __imp__nettle_poly1305_blocks
++__imp__nettle_poly1305_blocks:
++    .quad   _nettle_poly1305_blocks
++    .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/poly1305-internal.asm nettle-3.10.2/x86_64/poly1305-internal.asm
+--- nettle-3.10.2.orig/x86_64/poly1305-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/poly1305-internal.asm	2025-11-22 13:56:46.312960290 +0100
+@@ -206,3 +206,22 @@
+ 	ret
+ EPILOGUE(_nettle_poly1305_digest)
+ 
++#ifdef __midipix__
++	.section .got$_nettle_poly1305_set_key,"r"
++	.global __imp__nettle_poly1305_set_key
++__imp__nettle_poly1305_set_key:
++	.quad   _nettle_poly1305_set_key
++	.linkonce discard
++
++	.section .got$_nettle_poly1305_block,"r"
++	.global __imp__nettle_poly1305_block
++__imp__nettle_poly1305_block:
++	.quad   _nettle_poly1305_block
++	.linkonce discard
++
++	.section .got$_nettle_poly1305_digest,"r"
++	.global __imp__nettle_poly1305_digest
++__imp__nettle_poly1305_digest:
++	.quad   _nettle_poly1305_digest
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/salsa20-2core.asm nettle-3.10.2/x86_64/salsa20-2core.asm
+--- nettle-3.10.2.orig/x86_64/salsa20-2core.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/salsa20-2core.asm	2025-11-22 13:56:46.313077693 +0100
+@@ -316,3 +316,11 @@
+ 	W64_EXIT(3, 13)
+ 	ret
+ EPILOGUE(_nettle_salsa20_2core)
++
++#ifdef __midipix__
++        .section .got$_nettle_salsa20_2core,"r"
++        .global __imp__nettle_salsa20_2core
++__imp__nettle_salsa20_2core:
++        .quad   _nettle_salsa20_2core
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/salsa20-core-internal.asm nettle-3.10.2/x86_64/salsa20-core-internal.asm
+--- nettle-3.10.2.orig/x86_64/salsa20-core-internal.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/salsa20-core-internal.asm	2025-11-22 13:56:46.313199097 +0100
+@@ -109,3 +109,11 @@
+ 	W64_EXIT(3, 9)
+ 	ret
+ EPILOGUE(_nettle_salsa20_core)
++
++#ifdef __midipix__
++	.section .got$_nettle_salsa20_core,"r"
++	.global __imp__nettle_salsa20_core
++__imp__nettle_salsa20_core:
++	.quad   _nettle_salsa20_core
++	.linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/serpent-decrypt.asm nettle-3.10.2/x86_64/serpent-decrypt.asm
+--- nettle-3.10.2.orig/x86_64/serpent-decrypt.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/serpent-decrypt.asm	2025-11-22 13:56:46.313318499 +0100
+@@ -714,3 +714,11 @@
+ 	W64_EXIT(4, 13)
+ 	ret
+ EPILOGUE(nettle_serpent_decrypt)
++
++#ifdef __midipix__
++        .section .got$nettle_serpent_decrypt,"r"
++        .global __imp_nettle_serpent_decrypt
++__imp_nettle_serpent_decrypt:
++        .quad   nettle_serpent_decrypt
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/serpent-encrypt.asm nettle-3.10.2/x86_64/serpent-encrypt.asm
+--- nettle-3.10.2.orig/x86_64/serpent-encrypt.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/serpent-encrypt.asm	2025-11-22 13:56:46.313451590 +0100
+@@ -749,3 +749,11 @@
+ 	W64_EXIT(4, 13)
+ 	ret
+ EPILOGUE(nettle_serpent_encrypt)
++
++#ifdef __midipix__
++        .section .got$nettle_serpent_encrypt,"r"
++        .global __imp_nettle_serpent_encrypt
++__imp_nettle_serpent_encrypt:
++        .quad   nettle_serpent_encrypt
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/sha3-permute.asm nettle-3.10.2/x86_64/sha3-permute.asm
+--- nettle-3.10.2.orig/x86_64/sha3-permute.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/sha3-permute.asm	2025-11-22 13:56:46.313708559 +0100
+@@ -522,3 +522,11 @@
+ 	.quad	0x800000000000808A
+ 	.quad	0x0000000000008082
+ 	.quad	0x0000000000000001
++
++#ifdef __midipix__
++        .section .got$nettle_sha3_permute,"r"
++        .global __imp_nettle_sha3_permute
++__imp_nettle_sha3_permute:
++        .quad   nettle_sha3_permute
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/sha512-compress.asm nettle-3.10.2/x86_64/sha512-compress.asm
+--- nettle-3.10.2.orig/x86_64/sha512-compress.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/sha512-compress.asm	2025-11-22 13:56:46.313830382 +0100
+@@ -208,3 +208,11 @@
+ 	W64_EXIT(3, 0)
+ 	ret
+ EPILOGUE(_nettle_sha512_compress)
++
++#ifdef __midipix__
++        .section .got$_nettle_sha512_compress,"r"
++        .global __imp__nettle_sha512_compress
++__imp__nettle_sha512_compress:
++        .quad   _nettle_sha512_compress
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/umac-nh.asm nettle-3.10.2/x86_64/umac-nh.asm
+--- nettle-3.10.2.orig/x86_64/umac-nh.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/umac-nh.asm	2025-11-22 13:56:46.313939532 +0100
+@@ -79,3 +79,11 @@
+ 	W64_EXIT(3, 7)
+ 	ret
+ EPILOGUE(_nettle_umac_nh)
++
++#ifdef __midipix__
++        .section .got$_nettle_umac_nh,"r"
++        .global __imp__nettle_umac_nh
++__imp__nettle_umac_nh:
++        .quad   _nettle_umac_nh
++        .linkonce discard
++#endif
+diff -ru nettle-3.10.2.orig/x86_64/umac-nh-n.asm nettle-3.10.2/x86_64/umac-nh-n.asm
+--- nettle-3.10.2.orig/x86_64/umac-nh-n.asm	2025-06-26 20:29:03.000000000 +0200
++++ nettle-3.10.2/x86_64/umac-nh-n.asm	2025-11-22 13:56:46.314049138 +0100
+@@ -273,3 +273,11 @@
+ 	W64_EXIT(5, 14)
+ 	ret
+ EPILOGUE(_nettle_umac_nh_n)
++
++#ifdef __midipix__
++       .section .got$_nettle_umac_nh_n,"r"
++       .global __imp__nettle_umac_nh_n
++__imp__nettle_umac_nh_n:
++       .quad   _nettle_umac_nh_n
++       .linkonce discard
++#endif
