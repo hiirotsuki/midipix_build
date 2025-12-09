@@ -1,6 +1,7 @@
---- bdwgc/configure.ac.orig	2022-01-02 10:17:27.670680925 +0100
-+++ bdwgc/configure.ac	2022-01-02 10:19:10.029685443 +0100
-@@ -206,7 +206,7 @@
+diff -ru gc-8.2.8.orig/configure.ac gc-8.2.8/configure.ac
+--- gc-8.2.8.orig/configure.ac	2024-09-08 22:49:54.000000000 +0200
++++ gc-8.2.8/configure.ac	2025-12-04 21:46:10.438388436 +0100
+@@ -213,7 +213,7 @@
        *-*-aix* | *-*-android* | *-*-cygwin* | *-*-darwin* | *-*-dragonfly* | \
        *-*-freebsd* | *-*-haiku* | *-*-hpux11* | *-*-irix* | \
        *-*-kfreebsd*-gnu | *-*-gnu* | *-*-*linux* | *-*-msys* | *-*-nacl* | \
@@ -9,7 +10,7 @@
          AC_DEFINE(GC_THREADS)
          AC_DEFINE([_REENTRANT], [1],
                    [Required define if using POSIX threads.])
-@@ -252,6 +252,10 @@
+@@ -262,6 +262,10 @@
          THREADDLLIBS=""
          win32_threads=true
          ;;
@@ -20,3 +21,169 @@
        *-*-mingw*)
          AC_DEFINE(GC_WIN32_PTHREADS)
          # Using pthreads-win32 (or other non-Cygwin pthreads) library.
+diff -ru gc-8.2.8.orig/include/private/gcconfig.h gc-8.2.8/include/private/gcconfig.h
+--- gc-8.2.8.orig/include/private/gcconfig.h	2024-09-08 22:49:54.000000000 +0200
++++ gc-8.2.8/include/private/gcconfig.h	2025-12-09 19:50:03.062690540 +0100
+@@ -117,6 +117,28 @@
+ #   define LINUX
+ # endif
+ 
++# if defined(__midipix__)
++#  define MIDIPIX
++#  include <fcntl.h>
++#  include <sys/select.h>
++
++#  include <psxtypes/psxtypes.h>
++#  include <pemagine/pemagine.h>
++#  include <ntapi/nt_thread.h>
++
++#  define OS_TYPE "MIDIPIX"
++#  define SEARCH_FOR_MIDIPIX_DATA_BOUNDS
++extern ptr_t GC_data_start;
++extern ptr_t GC_data_end;
++#  define DATASTART GC_data_start
++#  define DATAEND GC_data_end
++#  define STACKBOTTOM ((ptr_t)(((nt_tib *)pe_get_teb_address())->stack_base))
++#  define USE_MMAP_ANON
++
++/* TODO: investigate this! */
++#  undef USE_MUNMAP
++# endif
++
+ /* And one for NetBSD: */
+ # if defined(__NetBSD__)
+ #    define NETBSD
+@@ -358,11 +380,11 @@
+ #    define X86_64
+ #    define mach_type_known
+ # endif
+-# if defined(LINUX) && (defined(i386) || defined(__i386__))
++# if (defined(LINUX) || defined(MIDIPIX)) && (defined(i386) || defined(__i386__))
+ #    define I386
+ #    define mach_type_known
+ # endif
+-# if defined(LINUX) && defined(__x86_64__)
++# if (defined(LINUX) || defined(MIDIPIX)) && defined(__x86_64__)
+ #    define X86_64
+ #    define mach_type_known
+ # endif
+@@ -2757,7 +2779,7 @@
+ #if defined(SVR4) || defined(LINUX) || defined(IRIX5) || defined(HPUX) \
+     || defined(OPENBSD) || defined(NETBSD) || defined(FREEBSD) \
+     || defined(DGUX) || defined(BSD) || defined(HAIKU) || defined(HURD) \
+-    || defined(AIX) || defined(DARWIN) || defined(OSF1)
++    || defined(AIX) || defined(DARWIN) || defined(OSF1) || defined(MIDIPIX)
+ # define UNIX_LIKE      /* Basic Unix-like system calls work.   */
+ #endif
+ 
+diff -ru gc-8.2.8.orig/include/private/gc_priv.h gc-8.2.8/include/private/gc_priv.h
+--- gc-8.2.8.orig/include/private/gc_priv.h	2024-09-08 22:49:54.000000000 +0200
++++ gc-8.2.8/include/private/gc_priv.h	2025-12-09 19:34:48.076585391 +0100
+@@ -2909,6 +2909,10 @@
+   GC_INNER void GC_set_and_save_fault_handler(void (*handler)(int));
+ #endif
+ 
++#ifdef SEARCH_FOR_MIDIPIX_DATA_BOUNDS
++GC_INNER void GC_init_midipix_data_bounds(void);
++#endif
++
+ #ifdef NEED_PROC_MAPS
+ # if defined(DYNAMIC_LOADING) && defined(USE_PROC_FOR_LIBRARIES)
+     GC_INNER const char *GC_parse_map_entry(const char *maps_ptr,
+diff -ru gc-8.2.8.orig/misc.c gc-8.2.8/misc.c
+--- gc-8.2.8.orig/misc.c	2024-09-08 22:49:54.000000000 +0200
++++ gc-8.2.8/misc.c	2025-12-09 19:44:26.320437771 +0100
+@@ -1274,6 +1274,10 @@
+        && (defined(SEARCH_FOR_DATA_START) || defined(NETBSD))
+       UNLOCK();
+ #   endif
++#ifdef SEARCH_FOR_MIDIPIX_DATA_BOUNDS
++  if (GC_REGISTER_MAIN_STATIC_DATA())
++    GC_init_midipix_data_bounds();
++#endif
+ #   ifndef GC_DISABLE_INCREMENTAL
+       if (GC_incremental || 0 != GETENV("GC_ENABLE_INCREMENTAL")) {
+ #       if defined(BASE_ATOMIC_OPS_EMULATED) || defined(CHECKSUMS) \
+diff -ru gc-8.2.8.orig/os_dep.c gc-8.2.8/os_dep.c
+--- gc-8.2.8.orig/os_dep.c	2024-09-08 22:49:54.000000000 +0200
++++ gc-8.2.8/os_dep.c	2025-12-09 19:41:22.152598999 +0100
+@@ -42,6 +42,12 @@
+ # include <ctype.h>
+ #endif
+ 
++#ifdef MIDIPIX
++# include <psxtypes/psxtypes.h>
++# include <pemagine/pemagine.h>
++# include <ntapi/nt_thread.h>
++#endif
++
+ /* Blatantly OS dependent routines, except for those that are related   */
+ /* to dynamic loading.                                                  */
+ 
+@@ -471,6 +477,66 @@
+   }
+ #endif /* SEARCH_FOR_DATA_START */
+ 
++#ifdef SEARCH_FOR_MIDIPIX_DATA_BOUNDS
++ptr_t GC_data_start = NULL;
++ptr_t GC_data_end = NULL;
++
++static uint32_t
++pe_read_u32(const unsigned char *p)
++{
++  return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16)
++         | ((uint32_t)p[3] << 24);
++}
++
++static uint16_t
++pe_read_u16(const unsigned char *p)
++{
++  return (uint16_t)p[0] | ((uint16_t)p[1] << 8);
++}
++
++GC_INNER void
++GC_init_midipix_data_bounds(void)
++{
++  void *base;
++  struct pe_raw_coff_image_hdr *coff;
++  struct pe_raw_sec_hdr *sec;
++  uint16_t num_sections, i;
++  ptr_t lowest = NULL;
++  ptr_t highest = NULL;
++
++  base = pe_get_first_module_handle();
++  coff = pe_get_image_coff_hdr_addr(base);
++  sec = pe_get_image_section_tbl_addr(base);
++
++  num_sections = pe_read_u16(coff->cfh_num_of_sections);
++
++  for (i = 0; i < num_sections; i++, sec++) {
++    uint32_t chars = pe_read_u32(sec->sh_characteristics);
++
++    if ((chars & (PE_IMAGE_SCN_CNT_INITIALIZED_DATA | PE_IMAGE_SCN_CNT_UNINITIALIZED_DATA)) && (chars & PE_IMAGE_SCN_MEM_WRITE)) {
++      uint32_t rva = pe_read_u32(sec->sh_virtual_addr);
++      uint32_t size = pe_read_u32(sec->sh_virtual_size);
++      ptr_t sec_start = (ptr_t)((char *)base + rva);
++      ptr_t sec_end = sec_start + size;
++
++      if (lowest == NULL || sec_start < lowest) {
++        lowest = sec_start;
++      }
++      if (highest == NULL || highest < sec_end) {
++        highest = sec_end;
++      }
++    }
++  }
++
++  GC_data_start = lowest;
++  GC_data_end = highest;
++
++# ifdef DEBUG_ADD_DEL_ROOTS
++  GC_log_printf("bounds: %p - %p\n", (void *)GC_data_start, (void *)GC_data_end);
++# endif
++}
++#endif /* SEARCH_FOR_MIDIPIX_DATA_BOUNDS */
++
+ #ifdef ECOS
+ 
+ # ifndef ECOS_GC_MEMORY_SIZE
