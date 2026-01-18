@@ -1,0 +1,12 @@
+diff -ru units-2.25.orig/Makefile.in units-2.25/Makefile.in
+--- units-2.25.orig/Makefile.in	2024-12-02 00:57:58.000000000 +0100
++++ units-2.25/Makefile.in	2026-01-18 11:11:51.383423572 +0100
+@@ -110,7 +110,7 @@
+ 
+ units_cur_inst: units_cur
+ 	sed -e "s*output_dir = ''*output_dir='@CDAT@'*"\
+-            -e "s@/usr/bin/python@$(PYTHON)@" \
++            -e "s@/usr/bin/python@/bin/python3@" \
+              $(srcdir)/units_cur > units_cur_inst
+ 
+ install-support: definitions.units elements.units units_cur_inst 

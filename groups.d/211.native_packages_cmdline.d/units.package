@@ -1,0 +1,7 @@
+: ${PKG_UNITS_SHA256SUM:=36edf43ac00b4d6304baea91387e65ab05118bf65c921f73d3b08828e5a6ec0b};
+: ${PKG_UNITS_VERSION:=2.25};
+: ${PKG_UNITS_URL:=https://ftp.gnu.org/gnu/units/units-${PKG_UNITS_VERSION}.tar.gz};
+
+ex_pkg_register "units" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
+
+# vim:filetype=sh textwidth=0
