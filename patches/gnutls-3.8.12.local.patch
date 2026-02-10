@@ -10,22 +10,6 @@ diff -ru gnutls-3.8.11.orig/lib/audit.c gnutls-3.8.11/lib/audit.c
  
  /**
   * gnutls_audit_push_context:
-diff -ru gnutls-3.8.11.orig/lib/crau/crau.h gnutls-3.8.11/lib/crau/crau.h
---- gnutls-3.8.11.orig/lib/crau/crau.h	2025-10-24 08:10:22.000000000 +0200
-+++ gnutls-3.8.11/lib/crau/crau.h	2025-11-22 14:24:15.093926641 +0100
-@@ -251,12 +251,7 @@
- # else
- 
- #  ifndef CRAU_MAYBE_UNUSED
--#   if defined(__has_c_attribute) && \
--    __has_c_attribute (__maybe_unused__)
--#    define CRAU_MAYBE_UNUSED [[__maybe_unused__]]
--#   elif defined(__GNUC__)
- #    define CRAU_MAYBE_UNUSED __attribute__((__unused__))
--#   endif
- #  endif /* CRAU_MAYBE_UNUSED */
- 
- void crau_push_context(struct crau_context_stack_st *stack CRAU_MAYBE_UNUSED,
 diff -ru gnutls-3.8.11.orig/lib/system/sockets.c gnutls-3.8.11/lib/system/sockets.c
 --- gnutls-3.8.11.orig/lib/system/sockets.c	2025-09-25 08:22:49.000000000 +0200
 +++ gnutls-3.8.11/lib/system/sockets.c	2025-11-22 14:17:14.306899955 +0100
