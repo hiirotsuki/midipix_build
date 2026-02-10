@@ -1,6 +1,6 @@
 : ${PKG_LIBPNG_DEPENDS:="libz"};
-: ${PKG_LIBPNG_SHA256SUM:=01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805};
-: ${PKG_LIBPNG_VERSION:=1.6.54};
+: ${PKG_LIBPNG_SHA256SUM:=d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d};
+: ${PKG_LIBPNG_VERSION:=1.6.55};
 : ${PKG_LIBPNG_URL:=https://ftp.osuosl.org/pub/blfs/conglomeration/libpng/libpng-${PKG_LIBPNG_VERSION}.tar.xz};
 
 ex_pkg_register "libpng" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
