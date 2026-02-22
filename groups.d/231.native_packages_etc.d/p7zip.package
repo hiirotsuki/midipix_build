@@ -2,6 +2,7 @@
 : ${PKG_P7ZIP_BUILD_STEPS_DISABLE:=install_make};
 : ${PKG_P7ZIP_IN_TREE:=1};
 : ${PKG_P7ZIP_INSTALL_FILES_V2:="+../p7zip-midipix.git/bin/7za=bin/%[FNAME]"};
+: ${PKG_P7ZIP_DISABLED:=1};
 
 ex_pkg_register "p7zip" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
 
