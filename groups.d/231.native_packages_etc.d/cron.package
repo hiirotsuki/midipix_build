@@ -1,4 +1,4 @@
-: ${PKG_CRON_URLS_GIT:="pkg-cron=https://github.com/lalbornoz/pkg-cron@master"};
+: ${PKG_CRON_URLS_GIT:="pkg-cron=https://github.com/hiirotsuki/pkg-cron@master"};
 : ${PKG_CRON_ENV_VARS_EXTRA:="CC=${DEFAULT_NATIVE_CC}:CFLAGS=${NATIVE_PACKAGES_CFLAGS_CONFIGURE} -D__GNU__"};
 : ${PKG_CRON_IN_TREE:=1};
 
