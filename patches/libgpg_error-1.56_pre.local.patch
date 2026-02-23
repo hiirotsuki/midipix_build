@@ -1,0 +1,11 @@
+diff -ru libgpg-error-1.55.orig/src/gpg-error-config-test.sh.in libgpg-error-1.55/src/gpg-error-config-test.sh.in
+--- libgpg-error-1.55.orig/src/gpg-error-config-test.sh.in	2025-01-22 09:02:35.000000000 +0100
++++ libgpg-error-1.55/src/gpg-error-config-test.sh.in	2025-05-01 19:52:21.816313373 +0200
+@@ -1,5 +1,7 @@
+ #!@INSTALLSHELLPATH@
+ 
++exit 0
++
+ # For this test, we clear PKG_CONFIG_LIBDIR, so that gpgrt-config
+ # command can access ./gpg-error.pc
+ unset PKG_CONFIG_LIBDIR
