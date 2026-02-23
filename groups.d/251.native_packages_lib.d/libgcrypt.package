@@ -1,6 +1,6 @@
 : ${PKG_LIBGCRYPT_DEPENDS:="libgpg_error"};
-: ${PKG_LIBGCRYPT_SHA256SUM:=6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac};
-: ${PKG_LIBGCRYPT_VERSION:=1.11.2};
+: ${PKG_LIBGCRYPT_SHA256SUM:=7df5c08d952ba33f9b6bdabdb06a61a78b2cf62d2122c2d1d03a91a79832aa3c};
+: ${PKG_LIBGCRYPT_VERSION:=1.12.1};
 : ${PKG_LIBGCRYPT_URL:=https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-${PKG_LIBGCRYPT_VERSION}.tar.bz2};
 : ${PKG_LIBGCRYPT_CONFIG_CACHE_EXTRA:="
 gcry_cv_broken_visibility_attribute=no
