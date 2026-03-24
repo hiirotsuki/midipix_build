@@ -1,4 +1,4 @@
-: ${PKG_GHOSTPDL_DEPENDS:="libpng tiff fontconfig libz libXt libX11 freetype expat openjpeg"};
+: ${PKG_GHOSTPDL_DEPENDS:="libpng tiff fontconfig libz libXt libX11 freetype expat openjpeg libiconv"};
 : ${PKG_GHOSTPDL_SHA256SUM:=9059bf9c0685e88206d34b702f5a15f148451959f73ab2d01d44a5b12088a762};
 : ${PKG_GHOSTPDL_VERSION:=9.52};
 : ${PKG_GHOSTPDL_URL:=https://mirror.midipix.org/ghostpdl/ghostpdl-${PKG_GHOSTPDL_VERSION}.tar.xz};
