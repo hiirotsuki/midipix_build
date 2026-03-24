@@ -1,7 +1,7 @@
 : ${PKG_XPDF_DEPENDS:="fontconfig libz"};
 : ${PKG_XPDF_SHA256SUM:=92707ed5acb6584fbd73f34091fda91365654ded1f31ba72f0970022cf2a5cea};
 : ${PKG_XPDF_VERSION:=4.05};
-: ${PKG_XPDF_URL:=https://dl.xpdfreader.com/xpdf-${PKG_XPDF_VERSION}.tar.gz};
+: ${PKG_XPDF_URL:=https://dl.xpdfreader.com/old/xpdf-${PKG_XPDF_VERSION}.tar.gz};
 : ${PKG_XPDF_CMAKE_ARGS_EXTRA:="
 	-DFREETYPE_LIBRARY=${PREFIX_NATIVE}/lib/libfreetype.lib.a
 	-DFREETYPE_INCLUDE_DIR_ft2build=${PREFIX_NATIVE}/include/ft2build
