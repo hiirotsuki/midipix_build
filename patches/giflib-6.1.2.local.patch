@@ -1,0 +1,24 @@
+diff -ru giflib-6.1.2.orig/doc/Makefile giflib-6.1.2/doc/Makefile
+--- giflib-6.1.2.orig/doc/Makefile	2026-03-10 18:50:52.000000000 +0100
++++ giflib-6.1.2/doc/Makefile	2026-03-28 15:16:44.857666546 +0100
+@@ -15,7 +15,7 @@
+ .adoc.html:
+ 	asciidoc $<
+ 
+-all: allhtml manpages
++all: manpages
+ 
+ # The distinction between XMLMAN and XMLINTERNAL is because
+ # some pages shouldn't be installed as part of a binary package;
+diff -ru giflib-6.1.2.orig/Makefile giflib-6.1.2/Makefile
+--- giflib-6.1.2.orig/Makefile	2026-03-10 18:50:52.000000000 +0100
++++ giflib-6.1.2/Makefile	2026-03-28 15:20:18.149132877 +0100
+@@ -106,7 +106,7 @@
+ LIBUTILSOMAJOR	= libutil.$(LIBMAJOR).$(SOEXTENSION)
+ endif
+ 
+-SHARED_LIBS = $(LIBGIFSO) $(LIBUTILSO)
++SHARED_LIBS = $(LIBGIFSO)
+ STATIC_LIBS = libgif.a libutil.a
+ 
+ all: shared-lib static-lib $(UTILS)
