@@ -1,0 +1,10 @@
+: ${PKG_LILT_DEPENDS:="sdl1"};
+: ${PKG_LILT_URLS_GIT:="lilt=https://github.com/hiirotsuki/lilt.git@master"};
+: ${PKG_LILT_IN_TREE:=1};
+: ${PKG_LILT_MAKEFLAGS_BUILD:="DESTDIR=${PREFIX_NATIVE}"};
+: ${PKG_LILT_CFLAGS_BUILD_EXTRA:="${DEFAULT_CFLAGS} -std=gnu99 -I${PREFIX_NATIVE}/include/SDL"};
+: ${PKG_LILT_LDFLAGS_BUILD_EXTRA:=${DEFAULT_LDFLAGS}};
+
+ex_pkg_register "lilt" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
+
+# vim:filetype=sh textwidth=0
