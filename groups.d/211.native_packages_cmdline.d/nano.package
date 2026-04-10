@@ -1,7 +1,7 @@
 : ${PKG_NANO_DEPENDS:="file libz ncursesw"};
-: ${PKG_NANO_SHA256SUM:=76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf};
-: ${PKG_NANO_VERSION:=8.7.1};
-: ${PKG_NANO_URL:=https://www.nano-editor.org/dist/v${PKG_NANO_VERSION%.[0-9].[0-9]}/nano-${PKG_NANO_VERSION}.tar.xz};
+: ${PKG_NANO_SHA256SUM:=9f384374b496110a25b73ad5a5febb384783c6e3188b37063f677ac908013fde};
+: ${PKG_NANO_VERSION:=9.0};
+: ${PKG_NANO_URL:=https://www.nano-editor.org/dist/v${PKG_NANO_VERSION%%.*}/nano-${PKG_NANO_VERSION}.tar.xz};
 : ${PKG_NANO_CFLAGS_CONFIGURE_EXTRA:="-std=gnu99"};
 : ${PKG_NANO_MAKEFLAGS_BUILD:="LIBS=-Wl,-lz,-lmagic,-lncursesw,-ltinfow"};
 
