@@ -1,6 +1,6 @@
-diff -ru gnutls-3.8.11.orig/lib/audit.c gnutls-3.8.11/lib/audit.c
---- gnutls-3.8.11.orig/lib/audit.c	2025-11-19 06:53:30.000000000 +0100
-+++ gnutls-3.8.11/lib/audit.c	2025-11-22 14:25:28.617946888 +0100
+diff -ru gnutls-3.8.12.orig/lib/audit.c gnutls-3.8.12/lib/audit.c
+--- gnutls-3.8.12.orig/lib/audit.c	2026-02-09 15:41:57.000000000 +0100
++++ gnutls-3.8.12/lib/audit.c	2026-04-17 19:18:14.698414836 +0200
 @@ -25,7 +25,7 @@
  #define CRAU_CONTEXT_STACK_DEPTH 8
  #include "audit.h"
@@ -10,9 +10,21 @@ diff -ru gnutls-3.8.11.orig/lib/audit.c gnutls-3.8.11/lib/audit.c
  
  /**
   * gnutls_audit_push_context:
-diff -ru gnutls-3.8.11.orig/lib/system/sockets.c gnutls-3.8.11/lib/system/sockets.c
---- gnutls-3.8.11.orig/lib/system/sockets.c	2025-09-25 08:22:49.000000000 +0200
-+++ gnutls-3.8.11/lib/system/sockets.c	2025-11-22 14:17:14.306899955 +0100
+diff -ru gnutls-3.8.12.orig/lib/random.c gnutls-3.8.12/lib/random.c
+--- gnutls-3.8.12.orig/lib/random.c	2026-02-09 15:41:57.000000000 +0100
++++ gnutls-3.8.12/lib/random.c	2026-04-17 19:25:55.012924015 +0200
+@@ -55,7 +55,7 @@
+ 
+ /* Flag to indicate initialization
+  */
+-static _Thread_local unsigned rnd_initialized = 0;
++static __thread unsigned rnd_initialized = 0;
+ 
+ static void free_ctx(const void *ctx)
+ {
+diff -ru gnutls-3.8.12.orig/lib/system/sockets.c gnutls-3.8.12/lib/system/sockets.c
+--- gnutls-3.8.12.orig/lib/system/sockets.c	2026-02-09 15:41:57.000000000 +0100
++++ gnutls-3.8.12/lib/system/sockets.c	2026-04-17 19:18:14.698851859 +0200
 @@ -161,7 +161,7 @@
  ssize_t system_writev(gnutls_transport_ptr_t ptr, const giovec_t *iovec,
  		      int iovec_cnt)
