@@ -1,6 +1,8 @@
 : ${PKG_KVAZAAR_SHA256SUM:=35e506a6d2be9ae343f17787eb80fa214492b276e9c88b6e93749050ae380070};
 : ${PKG_KVAZAAR_VERSION:=2.3.2};
 : ${PKG_KVAZAAR_URL:=https://github.com/ultravideo/kvazaar/releases/download/v${PKG_KVAZAAR_VERSION}/kvazaar-${PKG_KVAZAAR_VERSION}.tar.xz};
+: ${PKG_KVAZAAR_CONFIG_CACHE_EXTRA:="
+ax_cv_check_cflags___mavx2=no"};
 
 ex_pkg_register "kvazaar" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
 
