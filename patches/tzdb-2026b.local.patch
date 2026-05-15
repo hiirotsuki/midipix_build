@@ -1,0 +1,21 @@
+diff -ru tzdb-2026b.orig/private.h tzdb-2026b/private.h
+--- tzdb-2026b.orig/private.h	2026-02-28 21:11:24.000000000 +0100
++++ tzdb-2026b/private.h	2026-05-15 20:27:34.772405059 +0200
+@@ -303,7 +303,7 @@
+ #ifndef HAVE_ISSETUGID
+ # if (defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ \
+       || (defined __linux__ && !defined __GLIBC__) /* Android, musl, etc. */ \
+-      || (defined __APPLE__ && defined __MACH__) || defined __sun)
++      || (defined __APPLE__ && defined __MACH__) || defined __sun || defined __midipix__)
+ #  define HAVE_ISSETUGID 1
+ # else
+ #  define HAVE_ISSETUGID 0
+@@ -838,7 +838,7 @@
+ 
+ #ifndef HAVE_MEMPCPY
+ # if (defined mempcpy \
+-      || defined __FreeBSD__ || defined __NetBSD__ || defined __linux__)
++      || defined __FreeBSD__ || defined __NetBSD__ || defined __linux__ || defined __midipix__)
+ #  define HAVE_MEMPCPY 1
+ # else
+ #  define HAVE_MEMPCPY 0
