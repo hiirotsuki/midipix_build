@@ -1,6 +1,6 @@
 : ${PKG_TIFF_DEPENDS:="libjpeg_turbo libz xz zstd"};
-: ${PKG_TIFF_SHA256SUM:=b92017489bdc1db3a4c97191aa4b75366673cb746de0dce5d7a749d5954681ba};
-: ${PKG_TIFF_VERSION:=4.7.1};
+: ${PKG_TIFF_SHA256SUM:=4996f0c4f93094719b1ca5c6279b20e588773ba8a247533e486416fb662ddb88};
+: ${PKG_TIFF_VERSION:=4.7.2};
 : ${PKG_TIFF_URL:=https://download.osgeo.org/libtiff/tiff-${PKG_TIFF_VERSION}.tar.xz};
 : ${PKG_TIFF_CONFIGURE_ARGS_EXTRA:=--disable-cxx};
 : ${PKG_TIFF_CFLAGS_CONFIGURE_EXTRA:="-std=gnu99"};
