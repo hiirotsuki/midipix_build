@@ -1,6 +1,6 @@
 : ${PKG_LIBIDN_DEPENDS:="libiconv"};
-: ${PKG_LIBIDN_SHA256SUM:=bdc662c12d041b2539d0e638f3a6e741130cdb33a644ef3496963a443482d164};
-: ${PKG_LIBIDN_VERSION:=1.43};
+: ${PKG_LIBIDN_SHA256SUM:=499608bab3a65650a0ea52888c13a8deebe3f71408e319acd9ec52e02eb13959};
+: ${PKG_LIBIDN_VERSION:=1.44};
 : ${PKG_LIBIDN_URL:=https://ftp.gnu.org/gnu/libidn/libidn-${PKG_LIBIDN_VERSION}.tar.gz};
 : ${PKG_LIBIDN_CONFIGURE_ARGS_EXTRA:="--disable-java --disable-csharp --disable-gtk-doc --disable-gtk-doc-html --disable-gtk-doc-pdf"};
 
