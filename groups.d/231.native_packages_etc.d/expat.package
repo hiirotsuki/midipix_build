@@ -1,6 +1,6 @@
-: ${PKG_EXPAT_SHA256SUM:=71df8f40706a7bb0a80a5367079ea75d91da4f8c65c58ec59bcdfbf7decdab9f};
-: ${PKG_EXPAT_VERSION:=2.7.3};
-: ${PKG_EXPAT_URL:=http://download.openpkg.org/components/cache/expat/expat-${PKG_EXPAT_VERSION}.tar.xz};
+: ${PKG_EXPAT_SHA256SUM:=3ad89b8588e6644bd4e49981480d48b21289eebbcd4f0a1a4afb1c29f99b6ab4};
+: ${PKG_EXPAT_VERSION:=2.8.2};
+: ${PKG_EXPAT_URL:=https://github.com/libexpat/libexpat/releases/download/R_${PKG_EXPAT_VERSION//./_}/expat-${PKG_EXPAT_VERSION}.tar.xz};
 : ${PKG_EXPAT_CONFIGURE_ARGS_EXTRA:="--with-getrandom --with-sys-getrandom --without-docbook --without-tests"};
 : ${PKG_EXPAT_CFLAGS_CONFIGURE_EXTRA:="-DXML_ENABLE_VISIBILITY"};
 
