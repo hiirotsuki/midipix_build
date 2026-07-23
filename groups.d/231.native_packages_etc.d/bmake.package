@@ -4,6 +4,7 @@
 : ${PKG_BMAKE_SUBDIR:=bmake-20240401};
 : ${PKG_BMAKE_CONFIGURE_TYPE:="sofort"};
 : ${PKG_BMAKE_CONFIGURE_ARGS:=--prefix=};
+: ${PKG_BMAKE_SOFORT_NATIVE_CFLAGS_EXTRA:="-D_GNU_SOURCE"};
 
 ex_pkg_register "bmake" "${RTL_FILEOP_SOURCE_FNAME}" "native_packages";
 

@@ -4,6 +4,7 @@
 : ${PKG_BMAKE_HOST_SUBDIR:=bmake-20240401};
 : ${PKG_BMAKE_HOST_CONFIGURE_TYPE:="sofort"};
 : ${PKG_BMAKE_HOST_CONFIGURE_ARGS:="--prefix= --with-default-sys-path=${PREFIX}/share/mk"};
+: ${PKG_BMAKE_HOST_SOFORT_NATIVE_CFLAGS_EXTRA:="-D_GNU_SOURCE"};
 
 ex_pkg_register "bmake_host" "${RTL_FILEOP_SOURCE_FNAME}" "host_deps";
 
