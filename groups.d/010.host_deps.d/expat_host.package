@@ -1,6 +1,6 @@
-: ${PKG_EXPAT_HOST_SHA256SUM:=354552544b8f99012e5062f7d570ec77f14b412a3ff5c7d8d0dae62c0d217c30};
-: ${PKG_EXPAT_HOST_VERSION:=2.7.1};
-: ${PKG_EXPAT_HOST_URL:=http://download.openpkg.org/components/cache/expat/expat-${PKG_EXPAT_HOST_VERSION}.tar.xz};
+: ${PKG_EXPAT_HOST_SHA256SUM:=3ad89b8588e6644bd4e49981480d48b21289eebbcd4f0a1a4afb1c29f99b6ab4};
+: ${PKG_EXPAT_HOST_VERSION:=2.8.2};
+: ${PKG_EXPAT_HOST_URL:=https://github.com/libexpat/libexpat/releases/download/R_${PKG_EXPAT_HOST_VERSION//./_}/expat-${PKG_EXPAT_HOST_VERSION}.tar.xz};
 : ${PKG_EXPAT_HOST_CONFIGURE_ARGS_EXTRA:="--without-docbook"};
 : ${PKG_EXPAT_HOST_CONFIGURE_TYPE:="autotools"};
 : ${PKG_EXPAT_HOST_LDFLAGS_CONFIGURE:="-Wl,-rpath,${PREFIX}/lib"};
