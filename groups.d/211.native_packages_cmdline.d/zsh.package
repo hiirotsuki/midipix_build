@@ -1,6 +1,6 @@
 : ${PKG_ZSH_DEPENDS:="libiconv ncurses ncursesw"};
-: ${PKG_ZSH_SHA256SUM:=9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5};
-: ${PKG_ZSH_VERSION:=5.9};
+: ${PKG_ZSH_SHA256SUM:=36fa734374b44783582cec09bcd67822e2f992c779ec1624ab5596df078d2f81};
+: ${PKG_ZSH_VERSION:=5.9.2};
 : ${PKG_ZSH_URL:=https://www.zsh.org/pub/zsh-${PKG_ZSH_VERSION}.tar.xz};
 : ${PKG_ZSH_CONFIG_CACHE_EXTRA:="zsh_cv_sys_elf=no
 zsh_cv_shared_tgetent=yes
