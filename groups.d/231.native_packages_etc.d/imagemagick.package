@@ -1,7 +1,7 @@
 : ${PKG_IMAGEMAGICK_DEPENDS:="bzip2 curl freetype fontconfig libpng libz libzip libxml2 tiff xz zstd"};
-: ${PKG_IMAGEMAGICK_SHA256SUM:=1e44faec8bf603e8c894a7c039fb1b4bb83dc0c429c79c74577e73ceefe4a238};
-: ${PKG_IMAGEMAGICK_VERSION:=7.1.1-21};
-: ${PKG_IMAGEMAGICK_URL:=https://imagemagick.org/download/releases/ImageMagick-${PKG_IMAGEMAGICK_VERSION}.tar.xz};
+: ${PKG_IMAGEMAGICK_SHA256SUM:=4b131411aa77b051908ea35df65ca2c52dbe04b48c3ef6b06f35c1bb595b212f};
+: ${PKG_IMAGEMAGICK_VERSION:=7.1.2-29};
+: ${PKG_IMAGEMAGICK_URL:=https://github.com/ImageMagick/ImageMagick/releases/download/${PKG_IMAGEMAGICK_VERSION}/ImageMagick-${PKG_IMAGEMAGICK_VERSION}.tar.xz};
 : ${PKG_IMAGEMAGICK_CFLAGS_CONFIGURE_EXTRA:="-I${PREFIX_NATIVE}/include/freetype2"};
 : ${PKG_IMAGEMAGICK_CONFIGURE_ARGS_EXTRA:="--with-modules --without-x --without-pango --without-jemalloc --without-tcmalloc --without-umem"};
 : ${PKG_IMAGEMAGICK_LIBTOOL="clibtool"};
