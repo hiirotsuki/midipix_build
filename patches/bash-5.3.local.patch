@@ -1,0 +1,791 @@
+Only in bash-5.3: bash53-001
+Only in bash-5.3: bash53-002
+Only in bash-5.3: bash53-003
+Only in bash-5.3: bash53-004
+Only in bash-5.3: bash53-005
+Only in bash-5.3: bash53-006
+Only in bash-5.3: bash53-007
+Only in bash-5.3: bash53-008
+Only in bash-5.3: bash53-009
+Only in bash-5.3: bash53-010
+Only in bash-5.3: bash53-011
+Only in bash-5.3: bash53-012
+Only in bash-5.3: bash53-013
+Only in bash-5.3: bash53-014
+Only in bash-5.3: bash53-015
+Only in bash-5.3: bash53-016
+Only in bash-5.3: bash53-017
+Only in bash-5.3: bash53-018
+Only in bash-5.3: bash53-019
+Only in bash-5.3: bash53-020
+diff -ru bash-5.3.orig/builtins/evalfile.c bash-5.3/builtins/evalfile.c
+--- bash-5.3.orig/builtins/evalfile.c	2024-09-06 21:42:40.000000000 +0200
++++ bash-5.3/builtins/evalfile.c	2026-10-10 20:32:18.766741334 +0200
+@@ -160,8 +160,10 @@
+       nr = read (fd, string, file_size);
+       if (nr >= 0)
+ 	string[nr] = '\0';
++#if 0
+       if (nr != file_size)
+ 	nr = -1;		/* XXX - didn't get the whole file */
++#endif
+     }
+   else
+     nr = zmapfd (fd, &string, 0);
+diff -ru bash-5.3.orig/builtins/mapfile.def bash-5.3/builtins/mapfile.def
+--- bash-5.3.orig/builtins/mapfile.def	2024-05-06 17:58:48.000000000 +0200
++++ bash-5.3/builtins/mapfile.def	2026-10-10 20:32:31.653734957 +0200
+@@ -153,9 +153,7 @@
+   line_length = 0;
+   unbuffered_read = 0;
+ 
+-  /* The following check should be done before reading any lines.  Doing it
+-     here allows us to call bind_array_element instead of bind_array_variable
+-     and skip the variable lookup on every call. */
++  /* The following check should be done before reading any lines. */
+   entry = builtin_find_indexed_array (array_name, flags & MAPF_CLEARARRAY);
+   if (entry == 0)
+     return EXECUTION_FAILURE;
+@@ -199,11 +197,16 @@
+ 	    zsyncfd (fd);
+ 
+ 	  run_callback (callback, array_index, line);
+-	}
+ 
+-      /* XXX - bad things can happen if the callback modifies ENTRY, e.g.,
+-	 unsetting it or changing it to a non-indexed-array type. */
+-      bind_array_element (entry, array_index, line, 0);
++	  /* Bad things can happen if the callback modifies ENTRY, e.g.,
++	     unsetting it or changing it to a non-indexed-array type, so we
++	     look it up again every time we need to assign something */
++	  entry = bind_array_variable (array_name, array_index, line, 0);
++	  if (entry == 0 || ASSIGN_DISALLOWED (entry, 0))
++	    return EXECUTION_FAILURE;
++	}
++      else
++	bind_array_element (entry, array_index, line, 0);
+ 
+       /* Have we exceeded # of lines to store? */
+       line_count++;
+diff -ru bash-5.3.orig/builtins/read.def bash-5.3/builtins/read.def
+--- bash-5.3.orig/builtins/read.def	2025-06-25 21:50:18.000000000 +0200
++++ bash-5.3/builtins/read.def	2026-10-10 20:32:32.533194886 +0200
+@@ -538,7 +538,8 @@
+ 	     so we have to save input_string temporarily, run the unwind-
+ 	     protects, then restore input_string so we can use it later */
+ 	  orig_input_string = 0;
+-	  input_string[i] = '\0';	/* make sure it's terminated */
++	  if (i >= 0)
++	    input_string[i] = '\0';	/* make sure it's terminated */
+ 	  if (i == 0)
+ 	    {
+ 	      t = (char *)xmalloc (1);
+@@ -592,8 +593,7 @@
+ 	  termsave.attrs = ttattrs;
+ 
+ 	  ttset = ttattrs;	  
+-	  i = silent ? ttfd_cbreak (fd, &ttset) : ttfd_onechar (fd, &ttset);
+-	  if (i < 0)
++	  if ((silent ? ttfd_cbreak (fd, &ttset) : ttfd_onechar (fd, &ttset)) < 0)
+ 	    sh_ttyerror (1);
+ 	  tty_modified = 1;
+ 	  add_unwind_protect (uw_ttyrestore, &termsave);
+@@ -609,8 +609,7 @@
+       termsave.attrs = ttattrs;
+ 
+       ttset = ttattrs;
+-      i = ttfd_noecho (fd, &ttset);			/* ttnoecho (); */
+-      if (i < 0)
++      if (ttfd_noecho (fd, &ttset) < 0)
+ 	sh_ttyerror (1);
+ 
+       tty_modified = 1;
+@@ -788,8 +787,11 @@
+ 	  char *x;
+ 	  x = (char *)xrealloc (input_string, size += 128);
+ 
+-	  /* Only need to change unwind-protect if input_string changes */
++#if 0
++	  /* This is, in theory, undefined behavior, since input_string may
++	     have been freed. */
+ 	  if (x != input_string)
++#endif
+ 	    {
+ 	      input_string = x;
+ 	      remove_unwind_protect ();
+diff -ru bash-5.3.orig/configure bash-5.3/configure
+--- bash-5.3.orig/configure	2025-06-30 16:05:30.000000000 +0200
++++ bash-5.3/configure	2026-10-10 20:32:33.364734109 +0200
+@@ -23133,7 +23133,7 @@
+ dgux*)		LOCAL_CFLAGS=-D_DGUX_SOURCE; LOCAL_LIBS=-ldgc ;;
+ isc*)		LOCAL_CFLAGS=-Disc386 ;;
+ rhapsody*)	LOCAL_CFLAGS=-DRHAPSODY ;;
+-darwin*)	LOCAL_CFLAGS=-DMACOSX ;;
++darwin*)	LOCAL_CFLAGS="-DMACOSX -DPIPESIZE_DYNAMIC" ;;
+ sco3.2v5*)	LOCAL_CFLAGS="-b elf -DWAITPID_BROKEN -DPATH_MAX=1024" ;;
+ sco3.2v4*)	LOCAL_CFLAGS="-DMUST_UNBLOCK_CHLD -DPATH_MAX=1024" ;;
+ sco3.2*)	LOCAL_CFLAGS=-DMUST_UNBLOCK_CHLD ;;
+diff -ru bash-5.3.orig/configure.ac bash-5.3/configure.ac
+--- bash-5.3.orig/configure.ac	2025-06-30 16:05:24.000000000 +0200
++++ bash-5.3/configure.ac	2026-10-10 20:32:33.360243589 +0200
+@@ -1209,7 +1209,7 @@
+ dgux*)		LOCAL_CFLAGS=-D_DGUX_SOURCE; LOCAL_LIBS=-ldgc ;;
+ isc*)		LOCAL_CFLAGS=-Disc386 ;;
+ rhapsody*)	LOCAL_CFLAGS=-DRHAPSODY ;;
+-darwin*)	LOCAL_CFLAGS=-DMACOSX ;;
++darwin*)	LOCAL_CFLAGS="-DMACOSX -DPIPESIZE_DYNAMIC" ;;
+ sco3.2v5*)	LOCAL_CFLAGS="-b elf -DWAITPID_BROKEN -DPATH_MAX=1024" ;;
+ sco3.2v4*)	LOCAL_CFLAGS="-DMUST_UNBLOCK_CHLD -DPATH_MAX=1024" ;;
+ sco3.2*)	LOCAL_CFLAGS=-DMUST_UNBLOCK_CHLD ;;
+diff -ru bash-5.3.orig/execute_cmd.c bash-5.3/execute_cmd.c
+--- bash-5.3.orig/execute_cmd.c	2025-06-05 17:02:01.000000000 +0200
++++ bash-5.3/execute_cmd.c	2026-10-10 20:32:29.574735986 +0200
+@@ -1643,13 +1643,13 @@
+ 
+   if (user_subshell)
+     {
+-      subshell_environment = SUBSHELL_PAREN;	/* XXX */
++      subshell_environment = SUBSHELL_PAREN|SUBSHELL_IGNTRAP;	/* XXX */
+       if (asynchronous)
+ 	subshell_environment |= SUBSHELL_ASYNC;
+     }
+   else
+     {
+-      subshell_environment = 0;			/* XXX */
++      subshell_environment = SUBSHELL_IGNTRAP;			/* XXX */
+       if (asynchronous)
+ 	subshell_environment |= SUBSHELL_ASYNC;
+       if (pipe_in != NO_PIPE || pipe_out != NO_PIPE)
+diff -ru bash-5.3.orig/general.c bash-5.3/general.c
+--- bash-5.3.orig/general.c	2025-06-25 21:54:35.000000000 +0200
++++ bash-5.3/general.c	2026-10-10 20:32:33.359432476 +0200
+@@ -595,6 +595,27 @@
+   return 0;
+ }
+ 
++int
++sh_setnodelay (int fd)
++{
++  int flags;
++
++  if ((flags = fcntl (fd, F_GETFL, 0)) < 0)
++    return -1;
++
++  /* This is defined to O_NDELAY in filecntl.h if O_NONBLOCK is not present
++     and O_NDELAY is defined. */
++#ifdef O_NONBLOCK
++  flags |= O_NONBLOCK;
++#endif
++
++#ifdef O_NDELAY
++  flags |= O_NDELAY;
++#endif
++
++  return (fcntl (fd, F_SETFL, flags));
++}
++
+ /* Just a wrapper for the define in include/filecntl.h */
+ int
+ sh_setclexec (int fd)
+diff -ru bash-5.3.orig/general.h bash-5.3/general.h
+--- bash-5.3.orig/general.h	2025-06-25 21:52:47.000000000 +0200
++++ bash-5.3/general.h	2026-10-10 20:32:42.982118684 +0200
+@@ -110,8 +110,13 @@
+ #define INT_BUFSIZE_BOUND(t) (INT_STRLEN_BOUND (t) + 1)
+ 
+ /* Define exactly what a legal shell identifier consists of. */
+-#define legal_variable_starter(c) (ISALPHA(c) || (c == '_'))
+-#define legal_variable_char(c)	(ISALNUM(c) || c == '_')
++#if 0
++#define legal_variable_starter(c) (c < 128 && (ISALPHA(c) || c == '_'))
++#define legal_variable_char(c)	(c < 128 && (ISALNUM(c) || c == '_'))
++#else
++#define legal_variable_starter(c) (sh_syntaxtab[c] & CNAMESTART)
++#define legal_variable_char(c)	(sh_syntaxtab[c] & CNAME)
++#endif
+ 
+ /* Definitions used in subst.c and by the `read' builtin for field
+    splitting. */
+@@ -317,6 +322,7 @@
+ extern int assignment (const char *, int);
+ 
+ extern int sh_unset_nodelay_mode (int);
++extern int sh_setnodelay (int);
+ extern int sh_setclexec (int);
+ extern int sh_validfd (int);
+ extern int fd_ispipe (int);
+diff -ru bash-5.3.orig/jobs.c bash-5.3/jobs.c
+--- bash-5.3.orig/jobs.c	2025-03-08 00:48:44.000000000 +0100
++++ bash-5.3/jobs.c	2026-10-10 20:32:27.721736903 +0200
+@@ -2839,7 +2839,7 @@
+ 	  ps->pid = pid;
+ 	  ps->status = (r < 0 || r > 256) ? 127 : r;
+ 	}
+-      if (r == -1 && errno == ECHILD)
++      if ((r < 0 || r > 256) && errno == ECHILD)
+ 	{
+ 	  /* If we're mistaken about job state, compensate. */
+ 	  check_async = 0;
+@@ -3538,7 +3538,7 @@
+   /* There aren't any dead jobs in the jobs table, but let's see if there's
+      one in bgpids. We can do this in posix mode because we'll remove any
+      one we find from the table, preserving existing semantics. */
+-  if (posixly_correct && (t = bgp_findone ()))
++  if (posixly_correct && (flags & JWAIT_WAITING) == 0 && (t = bgp_findone ()))
+     {
+       pid = t->pid;
+       r = t->status;
+diff -ru bash-5.3.orig/lib/glob/smatch.c bash-5.3/lib/glob/smatch.c
+--- bash-5.3.orig/lib/glob/smatch.c	2023-05-29 20:15:17.000000000 +0200
++++ bash-5.3/lib/glob/smatch.c	2026-10-10 20:32:22.100008742 +0200
+@@ -390,7 +390,7 @@
+   if (c1 == c2)
+     return 0;
+ 
+-  if (forcecoll == 0 && glob_asciirange && c1 <= UCHAR_MAX && c2 <= UCHAR_MAX)
++  if (forcecoll == 0 && glob_asciirange)
+     return ((int)(c1 - c2));
+ 
+   s1[0] = c1;
+diff -ru bash-5.3.orig/lib/readline/display.c bash-5.3/lib/readline/display.c
+--- bash-5.3.orig/lib/readline/display.c	2025-05-02 15:20:32.000000000 +0200
++++ bash-5.3/lib/readline/display.c	2026-10-10 20:32:44.369728664 +0200
+@@ -1024,6 +1024,7 @@
+       while (local_prompt_newlines[newlines+1] != -1)
+ 	{
+ 	  temp = local_prompt_newlines[newlines+1];
++	  CHECK_INV_LBREAKS ();
+ 	  inv_lbreaks[++newlines] = temp;
+ 	}  
+ 
+@@ -1497,7 +1498,6 @@
+ 	     the characters from the current cursor position.  But we
+ 	     only need to reprint it if the cursor is before the last
+ 	     invisible character in the prompt string. */
+-	  /* XXX - why not use local_prompt_len? */
+ 	  nleft = prompt_visible_length + wrap_offset;
+ 	  if (cursor_linenum == prompt_last_screen_line)
+ 	    {
+@@ -1509,11 +1509,7 @@
+ 	         on the current screen line begins in the buffer. It is a
+ 	         buffer position, an index into curline
+ 	         (local_prompt + pmt_offset) */
+-	      cursor_bufpos = pmt_offset;
+-	      if (mb_cur_max == 1 || rl_byte_oriented)
+-		cursor_bufpos += _rl_last_c_pos;
+-	      else
+-		cursor_bufpos += _rl_last_c_pos + curline_invchars;
++	      cursor_bufpos = pmt_offset + local_prompt_len;
+ 
+ 	      if (local_prompt && local_prompt_invis_chars[cursor_linenum] &&
+ 		    _rl_last_c_pos > 0 &&
+@@ -2266,11 +2262,12 @@
+   od = ofd - old;	/* index of first difference in visible line */
+   nd = nfd - new;	/* nd, od are buffer indexes */
+   if (current_line == 0 && !_rl_horizontal_scroll_mode &&
+-      _rl_term_cr && lendiff > prompt_visible_length && _rl_last_c_pos > 0 &&
++      _rl_term_cr && lendiff > prompt_visible_length && _rl_last_c_pos >= 0 &&
+       (((od > 0 || nd > 0) && (od <= prompt_last_invisible || nd <= prompt_last_invisible)) ||
+ 		((od >= lendiff) && _rl_last_c_pos < PROMPT_ENDING_INDEX)))
+     {
+-      _rl_cr ();
++      if (_rl_last_c_pos > 0)
++	_rl_cr ();
+       if (modmark)
+ 	_rl_output_some_chars ("*", 1);
+       _rl_output_some_chars (local_prompt, lendiff);
+@@ -3525,8 +3522,9 @@
+   else
+     rl_crlf ();
+ 
+-  if (_rl_screenwidth < prompt_visible_length)
+-    _rl_reset_prompt ();		/* update local_prompt_newlines array */
++  /* Let expand_prompt() update local_prompt_newlines and local_prompt_invis_chars
++    arrays */
++  _rl_reset_prompt ();
+ 
+   /* Redraw only the last line of a multi-line prompt. */
+   t = strrchr (rl_display_prompt, '\n');
+Only in bash-5.3/lib/readline: display.c.orig
+diff -ru bash-5.3.orig/lib/readline/input.c bash-5.3/lib/readline/input.c
+--- bash-5.3.orig/lib/readline/input.c	2025-05-02 15:29:05.000000000 +0200
++++ bash-5.3/lib/readline/input.c	2026-10-10 20:32:24.827534774 +0200
+@@ -971,11 +971,11 @@
+ 	 call the application's signal event hook. */
+       if (rl_signal_event_hook)
+ 	(*rl_signal_event_hook) ();
+-#if defined (READLINE_CALLBACKS)
+-      else if (osig == SIGINT && (ostate & RL_STATE_CALLBACK) && (ostate & (RL_STATE_ISEARCH|RL_STATE_NSEARCH|RL_STATE_NUMERICARG)))
++      /* If the application's SIGINT handler returns, make sure we abort out of
++	 searches and numeric arguments because we've freed necessary state. */
++      if (osig == SIGINT && (ostate & (RL_STATE_ISEARCH|RL_STATE_NSEARCH|RL_STATE_NUMERICARG)))
+         /* just these cases for now */
+         _rl_abort_internal ();
+-#endif
+     }
+ }
+ 
+Only in bash-5.3/lib/readline: input.c.orig
+diff -ru bash-5.3.orig/lib/readline/isearch.c bash-5.3/lib/readline/isearch.c
+--- bash-5.3.orig/lib/readline/isearch.c	2025-06-05 15:22:11.000000000 +0200
++++ bash-5.3/lib/readline/isearch.c	2026-10-10 20:32:24.828115485 +0200
+@@ -889,12 +889,14 @@
+ int
+ _rl_isearch_cleanup (_rl_search_cxt *cxt, int r)
+ {
++  RL_UNSETSTATE(RL_STATE_ISEARCH);
++  if (cxt == 0)
++    return (r != 0);
++
++  _rl_iscxt = 0;
+   if (r >= 0)
+     _rl_isearch_fini (cxt);
+   _rl_scxt_dispose (cxt, 0);
+-  _rl_iscxt = 0;
+-
+-  RL_UNSETSTATE(RL_STATE_ISEARCH);
+ 
+   return (r != 0);
+ }
+diff -ru bash-5.3.orig/lib/sh/anonfile.c bash-5.3/lib/sh/anonfile.c
+--- bash-5.3.orig/lib/sh/anonfile.c	2024-07-09 17:41:57.000000000 +0200
++++ bash-5.3/lib/sh/anonfile.c	2026-10-10 20:32:13.596743889 +0200
+@@ -25,7 +25,7 @@
+ #endif
+ #include <bashtypes.h>
+ 
+-#if defined (HAVE_MEMFD_CREATE) || defined (HAVE_SHM_OPEN) || defined (HAVE_SHM_MKSTEMP)
++#if defined (HAVE_MEMFD_CREATE) || defined (HAVE_SHM_MKSTEMP)
+ #  include <sys/mman.h>
+ #endif
+ #include <filecntl.h>
+@@ -41,17 +41,7 @@
+ #  define MFD_NOEXEC_SEAL 0
+ #endif
+ 
+-#if defined (HAVE_SHM_OPEN)
+-#ifndef O_NOFOLLOW
+-#  define O_NOFOLLOW 0
+-#endif
+-
+-static int
+-anonshmunlink (const char *fn)
+-{
+-  return (shm_unlink (fn));
+-}
+-
++#if defined (HAVE_SHM_MKSTEMP)
+ static int
+ anonshmopen (const char *name, int flags, char **fn)
+ {
+@@ -62,35 +52,14 @@
+   if (fn)
+     *fn = 0;
+ 
+-#if defined (HAVE_SHM_MKSTEMP)
+   fname = savestring ("/shm-XXXXXXXXXX");
+   fd = shm_mkstemp (fname);
+   if (fd < 0)
+-    free (fname);
+-#endif
+-
+-  if (fd < 0)
+-    {
+-      fname = sh_mktmpname (name, flags);
+-      fd = shm_open (fname, O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW, 0600);
+-    }
+-
+-  if (fd < 0)
+     {
+       free (fname);
+       return fd;
+     }
+ 
+-  if (shm_unlink (fname) < 0)
+-    {
+-      int o;
+-      o = errno;
+-      free (fname);
+-      close (fd);
+-      errno = o;
+-      return -1;
+-    }
+-
+   if (fn)
+     *fn = fname;
+   else
+@@ -122,7 +91,7 @@
+   /* Heuristic */
+   flag = (name && *name == '/') ? MT_TEMPLATE : MT_USETMPDIR;
+ 
+-#if defined (HAVE_SHM_OPEN)
++#if defined (HAVE_SHM_MKSTEMP)
+   fd = anonshmopen (name, flag, fn);
+   if (fd >= 0)
+     return fd;		/* anonshmopen sets *FN appropriately */
+diff -ru bash-5.3.orig/lib/sh/strtrans.c bash-5.3/lib/sh/strtrans.c
+--- bash-5.3.orig/lib/sh/strtrans.c	2023-10-13 17:57:46.000000000 +0200
++++ bash-5.3/lib/sh/strtrans.c	2026-10-10 20:32:24.015738736 +0200
+@@ -55,7 +55,7 @@
+   const char *s;
+   unsigned long v;
+   size_t clen;
+-  int mb_cur_max;
++  size_t mb_cur_max;
+ #if defined (HANDLE_MULTIBYTE)
+   wchar_t wc;
+ #endif
+@@ -63,7 +63,7 @@
+   if (string == 0 || *string == '\0')
+     return ((char *)0);
+ 
+-  mb_cur_max = MB_CUR_MAX;
++  mb_cur_max = locale_mb_cur_max;
+ #if defined (HANDLE_MULTIBYTE)
+   temp = 4*len + 4;
+   if (temp < 12)
+@@ -79,10 +79,14 @@
+ 	{
+ 	  clen = 1;
+ #if defined (HANDLE_MULTIBYTE)
+-	  if ((locale_utf8locale && (c & 0x80)) ||
+-	      (locale_utf8locale == 0 && mb_cur_max > 0 && is_basic (c) == 0))
++	  /* We read an entire multibyte character at a time if we are in a
++	     locale where a backslash can possibly appear as part of a
++	     multibyte character. UTF-8 encodings prohibit this. */
++	  if (locale_utf8locale == 0 && mb_cur_max > 1 && is_basic (c) == 0)
+ 	    {
+ 	      clen = mbrtowc (&wc, s - 1, mb_cur_max, 0);
++	      if (MB_NULLWCH (clen))
++		break;			/* it apparently can happen */
+ 	      if (MB_INVALIDCH (clen))
+ 		clen = 1;
+ 	    }
+@@ -227,30 +231,24 @@
+ {
+   char *r, *ret;
+   const char  *s;
+-  size_t l, rsize;
+   unsigned char c;
++#if defined (HANDLE_MULTIBYTE)
+   size_t clen;
+   int b;
+-#if defined (HANDLE_MULTIBYTE)
+   wchar_t wc;
++  DECLARE_MBSTATE;
+ #endif
+ 
+   if (str == 0 || *str == 0)
+     return ((char *)0);
+ 
+-  l = strlen (str);
+-  rsize = 4 * l + 4;
+-  r = ret = (char *)xmalloc (rsize);
++  r = ret = (char *)xmalloc (4 * strlen (str) + 4);
+ 
+   *r++ = '$';
+   *r++ = '\'';
+ 
+   for (s = str; c = *s; s++)
+     {
+-      b = 1;		/* 1 == add backslash; 0 == no backslash */
+-      l = 1;
+-      clen = 1;
+-
+       switch (c)
+ 	{
+ 	case ESC: c = 'E'; break;
+@@ -266,39 +264,42 @@
+ 	  break;
+ 	default:
+ #if defined (HANDLE_MULTIBYTE)
+-	  b = is_basic (c);
+-	  /* XXX - clen comparison to 0 is dicey */
+-	  if ((b == 0 && ((clen = mbrtowc (&wc, s, MB_CUR_MAX, 0)) < 0 || MB_INVALIDCH (clen) || iswprint (wc) == 0)) ||
+-	      (b == 1 && ISPRINT (c) == 0))
+-#else
+-	  if (ISPRINT (c) == 0)
+-#endif
++	  if ((locale_utf8locale && (c & 0x80)) ||
++	      (locale_utf8locale == 0 && locale_mb_cur_max > 1 && is_basic (c) == 0))
+ 	    {
+-	      *r++ = '\\';
+-	      *r++ = TOCHAR ((c >> 6) & 07);
+-	      *r++ = TOCHAR ((c >> 3) & 07);
+-	      *r++ = TOCHAR (c & 07);
+-	      continue;
++	      clen = mbrtowc (&wc, s, locale_mb_cur_max, &state);
++	      if (MB_NULLWCH (clen))
++		goto quote_end;
++	      if (MB_INVALIDCH (clen))
++		INITIALIZE_MBSTATE;
++	      else if (iswprint (wc))
++		{
++		  for (b = 0; b < (int)clen; b++)
++		    *r++ = (unsigned char)s[b];
++		  s += clen - 1;	/* -1 because of the increment above */
++		  continue;
++		}
+ 	    }
+-	  l = 0;
+-	  break;
++	  else
++#endif
++	    if (ISPRINT (c))
++	      {
++		*r++ = c;
++		continue;
++	      }
++
++	  *r++ = '\\';
++	  *r++ = TOCHAR ((c >> 6) & 07);
++	  *r++ = TOCHAR ((c >> 3) & 07);
++	  *r++ = TOCHAR (c & 07);
++	  continue;
+ 	}
+-      if (b == 0 && clen == 0)
+-	break;
+ 
+-      if (l)
+-	*r++ = '\\';
+-
+-      if (clen == 1)
+-	*r++ = c;
+-      else
+-	{
+-	  for (b = 0; b < (int)clen; b++)
+-	    *r++ = (unsigned char)s[b];
+-	  s += clen - 1;	/* -1 because of the increment above */
+-	}
++      *r++ = '\\';
++      *r++ = c;
+     }
+ 
++quote_end:
+   *r++ = '\'';
+   *r = '\0';
+   if (rlen)
+@@ -348,7 +349,8 @@
+   for (s = string; c = *s; s++)
+     {
+ #if defined (HANDLE_MULTIBYTE)
+-      if (is_basic (c) == 0)
++      if ((locale_utf8locale && (c & 0x80)) ||
++	  (locale_utf8locale == 0 && locale_mb_cur_max > 1 && is_basic (c) == 0))
+ 	return (ansic_wshouldquote (s));
+ #endif
+       if (ISPRINT (c) == 0)
+diff -ru bash-5.3.orig/mksyntax.c bash-5.3/mksyntax.c
+--- bash-5.3.orig/mksyntax.c	2024-05-16 21:35:55.000000000 +0200
++++ bash-5.3/mksyntax.c	2026-10-10 20:32:42.981767431 +0200
+@@ -60,6 +60,8 @@
+ 	{ CSPECVAR,	"CSPECVAR" },
+ 	{ CSUBSTOP,	"CSUBSTOP" },
+ 	{ CBLANK,	"CBLANK" },
++	{ CNAME,	"CNAME" },
++	{ CNAMESTART,	"CNAMESTART" }
+ };
+ 	
+ #define N_WFLAGS	(sizeof (wordflags) / sizeof (wordflags[0]))
+@@ -198,6 +200,45 @@
+     }
+ }
+ 
++static void
++setnamechars(void)
++{
++  lsyntax['_'] |= CNAME|CNAMESTART;
++
++  lsyntax['0'] |= CNAME; lsyntax['1'] |= CNAME; lsyntax['2'] |= CNAME;
++  lsyntax['3'] |= CNAME; lsyntax['4'] |= CNAME; lsyntax['5'] |= CNAME;
++  lsyntax['6'] |= CNAME; lsyntax['7'] |= CNAME; lsyntax['8'] |= CNAME;
++  lsyntax['9'] |= CNAME;
++
++  lsyntax['a'] |= CNAME|CNAMESTART; lsyntax['b'] |= CNAME|CNAMESTART;
++  lsyntax['c'] |= CNAME|CNAMESTART; lsyntax['d'] |= CNAME|CNAMESTART;
++  lsyntax['e'] |= CNAME|CNAMESTART; lsyntax['f'] |= CNAME|CNAMESTART;
++  lsyntax['g'] |= CNAME|CNAMESTART; lsyntax['h'] |= CNAME|CNAMESTART;
++  lsyntax['i'] |= CNAME|CNAMESTART; lsyntax['j'] |= CNAME|CNAMESTART;
++  lsyntax['k'] |= CNAME|CNAMESTART; lsyntax['l'] |= CNAME|CNAMESTART;
++  lsyntax['m'] |= CNAME|CNAMESTART; lsyntax['n'] |= CNAME|CNAMESTART;
++  lsyntax['o'] |= CNAME|CNAMESTART; lsyntax['p'] |= CNAME|CNAMESTART;
++  lsyntax['q'] |= CNAME|CNAMESTART; lsyntax['r'] |= CNAME|CNAMESTART;
++  lsyntax['s'] |= CNAME|CNAMESTART; lsyntax['t'] |= CNAME|CNAMESTART;
++  lsyntax['u'] |= CNAME|CNAMESTART; lsyntax['v'] |= CNAME|CNAMESTART;
++  lsyntax['w'] |= CNAME|CNAMESTART; lsyntax['x'] |= CNAME|CNAMESTART;
++  lsyntax['y'] |= CNAME|CNAMESTART; lsyntax['z'] |= CNAME|CNAMESTART;
++
++  lsyntax['A'] |= CNAME|CNAMESTART; lsyntax['B'] |= CNAME|CNAMESTART;
++  lsyntax['C'] |= CNAME|CNAMESTART; lsyntax['D'] |= CNAME|CNAMESTART;
++  lsyntax['E'] |= CNAME|CNAMESTART; lsyntax['F'] |= CNAME|CNAMESTART;
++  lsyntax['G'] |= CNAME|CNAMESTART; lsyntax['H'] |= CNAME|CNAMESTART;
++  lsyntax['I'] |= CNAME|CNAMESTART; lsyntax['J'] |= CNAME|CNAMESTART;
++  lsyntax['K'] |= CNAME|CNAMESTART; lsyntax['L'] |= CNAME|CNAMESTART;
++  lsyntax['M'] |= CNAME|CNAMESTART; lsyntax['N'] |= CNAME|CNAMESTART;
++  lsyntax['O'] |= CNAME|CNAMESTART; lsyntax['P'] |= CNAME|CNAMESTART;
++  lsyntax['Q'] |= CNAME|CNAMESTART; lsyntax['R'] |= CNAME|CNAMESTART;
++  lsyntax['S'] |= CNAME|CNAMESTART; lsyntax['T'] |= CNAME|CNAMESTART;
++  lsyntax['U'] |= CNAME|CNAMESTART; lsyntax['V'] |= CNAME|CNAMESTART;
++  lsyntax['W'] |= CNAME|CNAMESTART; lsyntax['X'] |= CNAME|CNAMESTART;
++  lsyntax['Y'] |= CNAME|CNAMESTART; lsyntax['Z'] |= CNAME|CNAMESTART;
++}
++
+ /* load up the correct flag values in lsyntax */
+ static void
+ load_lsyntax (void)
+@@ -234,6 +275,8 @@
+   addcstr ("-=?+", CSUBSTOP);		/* OP in ${paramOPword} */
+ 
+   addblanks ();
++
++  setnamechars ();
+ }
+ 
+ static void
+diff -ru bash-5.3.orig/patchlevel.h bash-5.3/patchlevel.h
+--- bash-5.3.orig/patchlevel.h	2025-03-17 16:47:32.000000000 +0100
++++ bash-5.3/patchlevel.h	2026-10-10 20:32:44.370567668 +0200
+@@ -25,6 +25,6 @@
+    regexp `^#define[ 	]*PATCHLEVEL', since that's what support/mkversion.sh
+    looks for to find the patch level (for the sccs version string). */
+ 
+-#define PATCHLEVEL 0
++#define PATCHLEVEL 20
+ 
+ #endif /* _PATCHLEVEL_H_ */
+diff -ru bash-5.3.orig/redir.c bash-5.3/redir.c
+--- bash-5.3.orig/redir.c	2025-03-08 00:49:37.000000000 +0100
++++ bash-5.3/redir.c	2026-10-10 20:32:33.358734112 +0200
+@@ -472,7 +472,30 @@
+ 	}
+ #endif
+ 
++#if defined (PIPESIZE_DYNAMIC)
++      /* If we can't count on the pipe size determined at compile time to be
++	 constant across systems, define PIPESIZE_DYNAMIC in configure.ac.
++	 We set the pipe's write end to be non-blocking, try to write, and
++	 fall back to a temp file on error. */
++      if (sh_setnodelay (herepipe[1]) < 0)
++	{
++	  close (herepipe[0]);
++	  close (herepipe[1]);
++	  goto use_tempfile;
++	}
++#endif
++      
+       r = heredoc_write (herepipe[1], document, document_len);
++
++#if defined (PIPESIZE_DYNAMIC)
++      if (r == ENOSPC || r == EAGAIN)
++	{
++	  close (herepipe[0]);
++	  close (herepipe[1]);
++	  goto use_tempfile;
++	}
++#endif
++	  
+       if (document != redirectee->word)
+ 	free (document);
+       close (herepipe[1]);
+diff -ru bash-5.3.orig/sig.c bash-5.3/sig.c
+--- bash-5.3.orig/sig.c	2024-12-18 21:52:06.000000000 +0100
++++ bash-5.3/sig.c	2026-10-10 20:32:29.575733698 +0200
+@@ -638,7 +638,10 @@
+   interrupt_execution = retain_fifos = executing_funsub = 0;
+   comsub_ignore_return = return_catch_flag = wait_intr_flag = 0;
+ 
+-  run_exit_trap ();	/* XXX - run exit trap possibly in signal context? */
++  /* Don't run the exit trap if we're supposed to be ignoring traps in a
++     subshell environment. */
++  if ((subshell_environment & SUBSHELL_IGNTRAP) == 0)
++    run_exit_trap ();	/* XXX - run exit trap possibly in signal context? */
+ 
+   kill_shell (sig);
+ }
+diff -ru bash-5.3.orig/subst.c bash-5.3/subst.c
+--- bash-5.3.orig/subst.c	2025-05-18 21:00:13.000000000 +0200
++++ bash-5.3/subst.c	2026-10-10 20:32:23.102739188 +0200
+@@ -206,6 +206,8 @@
+ extern int singlequote_translations;
+ extern int extended_quote;
+ 
++extern REDIRECT *exec_redirection_undo_list, *redirection_undo_list;
++
+ #if !defined (HAVE_WCSDUP) && defined (HANDLE_MULTIBYTE)
+ extern wchar_t *wcsdup (const wchar_t *);
+ #endif
+@@ -3795,9 +3797,9 @@
+ #define EXP_CHAR(s) (s == '$' || s == '`' || s == CTLESC || s == '~')
+ #endif
+ 
+-/* We don't perform process substitution in arithmetic expressions, so don't
+-   bother checking for it. */
+-#define ARITH_EXP_CHAR(s) (s == '$' || s == '`' || s == CTLESC || s == '~')
++/* We don't perform process substitution or tilde expansion in arithmetic
++   expressions, so don't bother checking for them. */
++#define ARITH_EXP_CHAR(s) (s == '$' || s == '`' || s == CTLESC)
+ 
+ /* If there are any characters in STRING that require full expansion,
+    then call FUNC to expand STRING; otherwise just perform quote
+@@ -7000,6 +7002,11 @@
+       add_unwind_protect (uw_restore_pipestatus_array, psa);
+     }
+ #endif
++
++  unwind_protect_pointer (redirection_undo_list);
++  redirection_undo_list = NULL;
++  unwind_protect_pointer (exec_redirection_undo_list);
++  exec_redirection_undo_list = NULL;
+   
+   subst_assign_varlist = 0;
+ 
+@@ -12215,6 +12222,14 @@
+ 	      *r++ = '\\';
+ 	      break;
+ 	    }
++#if defined (ARRAY_VARS)
++	  /* The only special characters that matter here are []~, since those
++	     are backslash-quoted in expand_array_subscript but not dequoted
++	     by the statement following this one. */
++	  if ((quoted & Q_ARITH) && (c == LBRACK || c == RBRACK || c == '~'))
++	    ;		/* placeholder here */
++	  else
++#endif
+ 	  if (((quoted & (Q_HERE_DOCUMENT|Q_DOUBLE_QUOTES)) || dquote) && (sh_syntaxtab[c] & CBSDQUOTE) == 0)
+ 	    *r++ = '\\';
+ 	  /* FALLTHROUGH */
+diff -ru bash-5.3.orig/syntax.h bash-5.3/syntax.h
+--- bash-5.3.orig/syntax.h	2020-09-14 16:20:05.000000000 +0200
++++ bash-5.3/syntax.h	2026-10-10 20:32:42.981346566 +0200
+@@ -63,6 +63,8 @@
+ #define CSPECVAR	0x0800	/* single-character shell variable name */
+ #define CSUBSTOP	0x1000	/* values of OP for ${word[:]OPstuff} */
+ #define CBLANK		0x2000	/* whitespace (blank) character */
++#define CNAME		0x4000	/* POSIX name character ([_0-9a-zA-Z]) */
++#define CNAMESTART	0x8000	/* POSIX name start character ([_a-zA-Z]) */
+ 
+ /* Defines for use by the rest of the shell. */
+ extern int sh_syntaxtab[];
+diff -ru bash-5.3.orig/tests/quotearray.right bash-5.3/tests/quotearray.right
+--- bash-5.3.orig/tests/quotearray.right	2022-11-10 16:39:56.000000000 +0100
++++ bash-5.3/tests/quotearray.right	2026-10-10 20:32:15.422439182 +0200
+@@ -44,7 +44,7 @@
+ foo
+ 0
+ 0
+-./quotearray1.sub: line 68: 0\],b\[1: arithmetic syntax error: invalid arithmetic operator (error token is "\],b\[1")
++./quotearray1.sub: line 68: 0],b[1: arithmetic syntax error: invalid arithmetic operator (error token is "],b[1")
+ declare -a array
+ 0
+ 0
+diff -ru bash-5.3.orig/trap.c bash-5.3/trap.c
+--- bash-5.3.orig/trap.c	2024-12-19 17:35:49.000000000 +0100
++++ bash-5.3/trap.c	2026-10-10 20:32:20.919346499 +0200
+@@ -964,6 +964,7 @@
+       original_signals[sig] = SIG_DFL;	/* XXX */
+       set_signal_handler (sig, SIG_DFL);
+       change_signal (sig, (char *)DEFAULT_SIG);
++      sigmodes[sig] &= ~SIG_TRAPPED;	/* no longer trapped */
+       return;
+     }
+     
